@@ -17,6 +17,34 @@
 (elpy-enable)
 
 ;;-----------;
+;;  Installs ;
+;;-----------;
+
+;; (unless (package-installed-p )
+;;   (package-install ))
+;; (require )
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+
+(unless (package-installed-p 'rainbow-delimiters)
+  (package-install 'rainbow-delimiters))
+(require 'rainbow-delimiters)
+
+(unless (package-installed-p 'smartparens)
+  (package-install 'smartparens))
+(require 'smartparens)
+
+(unless (package-installed-p 'color-identifiers-mode)
+  (package-install 'color-identifiers-mode))
+(require 'color-identifiers-mode)
+
+(unless (package-installed-p 'auctex)
+  (package-install 'auctex))
+(require 'auctex)
+
+;;-----------;
 ;;  Themes   ;
 ;;-----------;
 
@@ -95,21 +123,7 @@
 (custom-set-variables
  '(initial-frame-alist (quote ((fullscreen . maximized)))))
 
-;;-----------;
-;;  Installs ;
-;;-----------;
 
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
-
-(unless (package-installed-p 'rainbow-delimiters)
-  (package-install 'rainbow-delimiters))
-(require 'rainbow-delimiters)
-
-(unless (package-installed-p 'smartparens)
-  (package-install 'smartparens))
-(require 'smartparens)
 
 ;;-----------;
 ;;  Python   ;
