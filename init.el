@@ -13,9 +13,6 @@
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize) ;; You might already have this line
 
-(package-initialize)
-(elpy-enable)
-
 ;;-----------;
 ;;  Installs ;
 ;;-----------;
@@ -42,7 +39,10 @@
 
 (unless (package-installed-p 'auctex)
   (package-install 'auctex))
-(require 'auctex)
+(require 'tex)
+
+(unless (package-installed-p 'elpy)
+  (package-install 'elpy))
 
 ;;-----------;
 ;;  Themes   ;
@@ -90,6 +90,8 @@
 ;;-----------;
 ;;    Keys   ;
 ;;-----------;
+
+(elpy-enable)
 
 (global-set-key (kbd "M-S-<left>") 'windmove-left)
 (global-set-key (kbd "M-S-<right>") 'windmove-right)
