@@ -79,6 +79,8 @@
 ;;    hooks  ;
 ;;-----------;
 
+(add-hook 'latex-mode-hook #'smartparens-mode)
+(add-hook 'LaTeX-mode-hook #'smartparens-mode)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook #'smartparens-mode)
 (add-hook 'python-mode-hook 'jedi:setup)
