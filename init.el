@@ -15,7 +15,8 @@
 
 (package-initialize)
 (elpy-enable)
-
+(desktop-save-mode 1)
+(setq-default indent-tabs-mode nil)
 ;;-----------;
 ;;  Themes   ;
 ;;-----------;
@@ -29,7 +30,11 @@
  '(custom-safe-themes
    (quote
     ("70403e220d6d7100bae7775b3334eddeb340ba9c37f4b39c189c2c29d458543b" default)))
- '(inhibit-startup-screen t))
+ '(inhibit-startup-screen t)
+ '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(package-selected-packages
+   (quote
+    (anything-tramp helm-tramp docker-tramp use-package tern-auto-complete smartparens rainbow-delimiters nodejs-repl multi-term magit js2-mode jedi jade-mode helm-swoop helm-descbinds flycheck emmet-mode elpy dockerfile-mode darkokai-theme company-quickhelp color-identifiers-mode ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -48,6 +53,33 @@
   (scroll-bar-mode -1))
 
 ;;-----------;
+;;   docker  ;
+;;-----------;
+
+;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
+(push
+ (cons
+  "docker"
+  '((tramp-login-program "docker")
+    (tramp-login-args (("exec" "-it") ("%h") ("/bin/bash")))
+    (tramp-remote-shell "/bin/sh")
+    (tramp-remote-shell-args ("-i") ("-c"))))
+ tramp-methods)
+
+(defadvice tramp-completion-handle-file-name-all-completions
+  (around dotemacs-completion-docker activate)
+  "(tramp-completion-handle-file-name-all-completions \"\" \"/docker:\" returns
+    a list of active Docker container names, followed by colons."
+  (if (equal (ad-get-arg 1) "/docker:")
+      (let* ((dockernames-raw (shell-command-to-string "docker ps | perl -we 'use strict; $_ = <>; m/^(.*)NAMES/ or die; my $offset = length($1); while(<>) {substr($_, 0, $offset, q()); chomp; for(split m/\\W+/) {print qq($_:\n)} }'"))
+             (dockernames (cl-remove-if-not
+                           #'(lambda (dockerline) (string-match ":$" dockerline))
+                           (split-string dockernames-raw "\n"))))
+        (setq ad-return-value dockernames))
+    ad-do-it))
+
+
+;;-----------;
 ;;    hooks  ;
 ;;-----------;
 
@@ -55,7 +87,7 @@
 (add-hook 'prog-mode-hook #'smartparens-mode)
 (add-hook 'python-mode-hook 'jedi:setup)
 (add-hook 'js-mode-hook (lambda () (tern-mode t)))
-(add-hook 'after-init-hook 'global-color-identifiers-mode)
+
 ;;(add-hook 'js-mode-hook 'js2-minor-mode)
 ;;(setq jedi:complete-on-dot t)                 ; optional
 
@@ -82,6 +114,7 @@
 (setq-default fill-column 80)
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'after-init-hook 'global-color-identifiers-mode)
 
 ;; utf-8 powaa!!
 (set-language-environment 'utf-8)
@@ -92,8 +125,7 @@
 (set-input-method nil)
 
 ;; Maximized!
-(custom-set-variables
- '(initial-frame-alist (quote ((fullscreen . maximized)))))
+
 
 ;;-----------;
 ;;  Installs ;
@@ -111,6 +143,24 @@
   (package-install 'smartparens))
 (require 'smartparens)
 
+(unless (package-installed-p 'docker-tramp)
+  (package-install 'docker-tramp))
+(require 'docker-tramp)
+
+;;-----------;
+;;  company  ;
+;;-----------;
+
+(use-package company-mode
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
+
+(use-package company-quickhelp
+  :ensure t
+  :init (company-quickhelp-mode 1)
+  :config (eval-after-load 'company
+'(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin)))
+
 ;;-----------;
 ;;  Python   ;
 ;;-----------;
@@ -121,12 +171,9 @@
 ;;-----------;
 ;;    js     ;
 ;;-----------;
-(add-to-list 'load-path "~/Documentos/github/tern/emacs/")
-(autoload 'tern-mode "tern.el" nil t)
-(eval-after-load 'tern
-   '(progn
-      (require 'tern-auto-complete)
-      (tern-ac-setup)))
+(add-to-list 'load-path "~/.emacs.d/config/")
+(require 'js-settings)
+
 
 ;;-----------;
 ;;  helm     ;
