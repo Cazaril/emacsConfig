@@ -17,6 +17,38 @@
 (elpy-enable)
 (desktop-save-mode 1)
 (setq-default indent-tabs-mode nil)
+
+;;-----------;
+;;  Installs ;
+;;-----------;
+
+;; (unless (package-installed-p )
+;;   (package-install ))
+;; (require )
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+
+(unless (package-installed-p 'rainbow-delimiters)
+  (package-install 'rainbow-delimiters))
+(require 'rainbow-delimiters)
+
+(unless (package-installed-p 'smartparens)
+  (package-install 'smartparens))
+(require 'smartparens)
+
+(unless (package-installed-p 'color-identifiers-mode)
+  (package-install 'color-identifiers-mode))
+(require 'color-identifiers-mode)
+
+(unless (package-installed-p 'auctex)
+  (package-install 'auctex))
+(require 'tex)
+
+(unless (package-installed-p 'elpy)
+  (package-install 'elpy))
+
 ;;-----------;
 ;;  Themes   ;
 ;;-----------;
@@ -83,6 +115,8 @@
 ;;    hooks  ;
 ;;-----------;
 
+(add-hook 'latex-mode-hook #'smartparens-mode)
+(add-hook 'LaTeX-mode-hook #'smartparens-mode)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'prog-mode-hook #'smartparens-mode)
 (add-hook 'python-mode-hook 'jedi:setup)
@@ -94,6 +128,8 @@
 ;;-----------;
 ;;    Keys   ;
 ;;-----------;
+
+(elpy-enable)
 
 (global-set-key (kbd "M-S-<left>") 'windmove-left)
 (global-set-key (kbd "M-S-<right>") 'windmove-right)
@@ -127,21 +163,7 @@
 ;; Maximized!
 
 
-;;-----------;
-;;  Installs ;
-;;-----------;
 
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
-
-(unless (package-installed-p 'rainbow-delimiters)
-  (package-install 'rainbow-delimiters))
-(require 'rainbow-delimiters)
-
-(unless (package-installed-p 'smartparens)
-  (package-install 'smartparens))
-(require 'smartparens)
 
 (unless (package-installed-p 'docker-tramp)
   (package-install 'docker-tramp))
